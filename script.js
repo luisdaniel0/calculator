@@ -7,33 +7,59 @@ let operator = null
 let secondNumber = null
 
 buttonContainer.addEventListener('click',(event)=>{
-    if(event.target.classList.contains('button')){
-        const value = event.target.getAttribute('data-value')
-        // console.log(value)
-    if(value){
-        inputString += value 
-        display.textContent = inputString
-    } else if (event.target.getAttribute('data-action')==="clear"){
-        inputString =""
-        display.textContent = inputString
-    } else if(["+","-","*","/"].includes(event.target.getAttribute('data-action'))){
-        firstNumber = parseFloat(inputString)
-        operator = event.target.getAttribute('data-action')
+  if(event.target.classList.contains('button')) {
+    const value = event.target.getAttribute('data-value');
+    const action = event.target.getAttribute('data-action');
+
+    // Handle CLEAR
+    if (action === "clear") {
+      inputString = "";
+      firstNumber = null;
+      secondNumber = null;
+      operator = null;
+      display.textContent = "0";
+      return;
+    }
+
+    // Handle EQUALS
+    if (action === "equals") {
+      secondNumber = parseFloat(inputString);
+      if(firstNumber !== null && operator && !isNaN(secondNumber)) {
+        const result = operate(operator, firstNumber, secondNumber);
+        display.textContent = result;
+        inputString = result.toString();
+        firstNumber = null;
+        secondNumber = null;
+        operator = null;
+      }
+      return;
+    }
+
+    // Handle OPERATOR
+    if (["+", "-", "*", "/"].includes(action)) {
+      if(operator!==null&&inputString!==""){
+        secondNumber = parseFloat(inputString)
+        const result = operate(operator,firstNumber,secondNumber)
+        display.textContent = result;
+
+        firstNumber=result
+        operator=action
         inputString=""
-        console.log("operator selectected: "+ operator)
-        console.log("number selected: " + firstNumber)
-    } else if (event.target.getAttribute('data-action')==="equals"){
-        secondNumber= parseFloat(inputString)
-        if(firstNumber!== null&& operator && !isNaN(secondNumber)){
-            const result =operate(operator, firstNumber,secondNumber);
-            display.textContent= result
-            inputString = result.toString();
-            firstNumber = null;
-            secondNumber = null
-        }
+      } else {
+        firstNumber = parseFloat(inputString)
+        operator= action
+        inputString=""
+      }
     }
+
+    // Handle NUMBER input
+    if (value) {
+      inputString += value;
+      display.textContent = inputString;
     }
-})
+  }
+});
+
 
 
 const add = (a,b)=>{
