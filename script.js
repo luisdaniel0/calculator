@@ -2,14 +2,36 @@ const buttonContainer = document.querySelector("#calc-buttons")
 const display = document.querySelector("#display")
 
 let inputString  = ""
+let firstNumber = null
+let operator = null
+let secondNumber = null
 
 buttonContainer.addEventListener('click',(event)=>{
     if(event.target.classList.contains('button')){
         const value = event.target.getAttribute('data-value')
-        console.log(value)
-        inputString = inputString+ value
+        // console.log(value)
+    if(value){
+        inputString += value 
         display.textContent = inputString
-        
+    } else if (event.target.getAttribute('data-action')==="clear"){
+        inputString =""
+        display.textContent = inputString
+    } else if(["+","-","*","/"].includes(event.target.getAttribute('data-action'))){
+        firstNumber = parseFloat(inputString)
+        operator = event.target.getAttribute('data-action')
+        inputString=""
+        console.log("operator selectected: "+ operator)
+        console.log("number selected: " + firstNumber)
+    } else if (event.target.getAttribute('data-action')==="equals"){
+        secondNumber= parseFloat(inputString)
+        if(firstNumber!== null&& operator && !isNaN(secondNumber)){
+            const result =operate(operator, firstNumber,secondNumber);
+            display.textContent= result
+            inputString = result.toString();
+            firstNumber = null;
+            secondNumber = null
+        }
+    }
     }
 })
 
@@ -35,8 +57,8 @@ const divide = (a,b)=>{
 // console.log(multiply(10,10)) //100
 // console.log(divide(10,5)) //2
 
-let firstNumber = 10
-let secondNumber  = 10
+// let firstNumber = 10
+// let secondNumber  = 10
 
 const operate = (operator,a,b) =>{
     if(operator === "+"){
@@ -50,4 +72,4 @@ const operate = (operator,a,b) =>{
     }
 }
 
-console.log(operate("/",firstNumber,secondNumber))
+// console.log(operate("/",firstNumber,secondNumber))
