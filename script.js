@@ -1,3 +1,13 @@
+const buttonContainer = document.querySelector("#calc-buttons")
+
+buttonContainer.addEventListener('click',(event)=>{
+    if(event.target.classList.contains('button')){
+        const value = event.target.getAttribute('data-value')
+        console.log(value)
+    }
+})
+
+
 const add = (a,b)=>{
     return a+b
 }
