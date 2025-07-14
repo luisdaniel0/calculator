@@ -5,6 +5,9 @@ let inputString  = ""
 let firstNumber = null
 let operator = null
 let secondNumber = null
+let justClickedOperator = false
+let result;
+
 
 buttonContainer.addEventListener('click',(event)=>{
   if(event.target.classList.contains('button')) {
@@ -37,6 +40,12 @@ buttonContainer.addEventListener('click',(event)=>{
 
     // Handle OPERATOR
     if (["+", "-", "*", "/"].includes(action)) {
+        if(justClickedOperator){
+            operator = action;
+            console.log("operator replaced with: " + operator)
+            return
+        }
+
       if(operator!==null&&inputString!==""){
         secondNumber = parseFloat(inputString)
         const result = operate(operator,firstNumber,secondNumber)
@@ -50,14 +59,29 @@ buttonContainer.addEventListener('click',(event)=>{
         operator= action
         inputString=""
       }
+      operator = action;
+      justClickedOperator = true;
     }
 
     // Handle NUMBER input
     if (value) {
-      inputString += value;
-      display.textContent = inputString;
-    }
+  if (display.textContent === "0" || justClickedOperator) {
+    inputString = value;
+  } else {
+    inputString += value;
   }
+
+  display.textContent = inputString;
+  justClickedOperator = false;
+  }
+
+  //handle delete
+  if(action==='delete'){
+    inputString = inputString.slice(0,-1)
+    display.textContent = inputString || "0"
+    return;
+  }
+}
 });
 
 
@@ -75,27 +99,33 @@ const multiply = (a,b)=>{
 }
 
 const divide = (a,b)=>{
+    if(b===0){
+        return "can't divide by zero!"
+    }
     return a/b 
 }
 
-// console.log(add(1,2)) //3
-// console.log(subtract(3,2)) //1
-// console.log(multiply(10,10)) //100
-// console.log(divide(10,5)) //2
 
-// let firstNumber = 10
-// let secondNumber  = 10
-
-const operate = (operator,a,b) =>{
-    if(operator === "+"){
-        return add(a,b)
-    } else if(operator=== "-"){
-        return subtract(a,b)
-    } else if(operator==="*"){
-        return multiply(a,b)
-    } else if(operator==="/"){
-        return divide(a,b)
+const operate = (operator, a, b) => {
+  if (operator === "+") return add(a, b);
+  if (operator === "-") return subtract(a, b);
+  if (operator === "*") return multiply(a, b);
+  if (operator === "/") {
+    let result = divide(a, b);
+    if (typeof result === "string") {
+      // it's our custom error message
+      return result;
     }
+    if (result % 1 !== 0) {
+    result = roundResult(result)
+  }
+    return result;
+  }
+};
+
+function roundResult(value) {
+  return Math.round(value * 100) / 100; // Rounds to 2 decimal places
 }
 
-// console.log(operate("/",firstNumber,secondNumber))
+
+
