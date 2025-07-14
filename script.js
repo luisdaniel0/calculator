@@ -1,9 +1,15 @@
 const buttonContainer = document.querySelector("#calc-buttons")
+const display = document.querySelector("#display")
+
+let inputString  = ""
 
 buttonContainer.addEventListener('click',(event)=>{
     if(event.target.classList.contains('button')){
         const value = event.target.getAttribute('data-value')
         console.log(value)
+        inputString = inputString+ value
+        display.textContent = inputString
+        
     }
 })
 
